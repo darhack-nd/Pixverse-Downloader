@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixverse Downloader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0084ff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fc1;
+    }
+    video {
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 12px;
+    }
+    .download {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px;
+      background: green;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Pixverse Downloader (No Watermark)</h2>
+    <input type="text" id="link" placeholder="Paste Pixverse share link here" />
+    <button onclick="getVideo()">Get Video</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    async function getVideo() {
+      const link = document.getElementById("link").value;
+      const output = document.getElementById("output");
+      output.innerHTML = "Loading...";
+
+      try {
+        const apiURL = `https://pixverse-downloader.glitch.me/api/fetch?url=${encodeURIComponent(link)}`;
+        const res = await fetch(apiURL);
+        const data = await res.json();
+
+        if (data.mp4) {
+          output.innerHTML = `
+            <video controls autoplay loop>
+              <source src="${data.mp4}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <br/>
+            <a href="${data.mp4}" download class="download">⬇ Download Video</a>
+          `;
+        } else {
+          output.innerHTML = `<p class="error">Gagal mengambil link video. Coba lagi.</p>`;
+        }
+      } catch (err) {
+        output.innerHTML = `<p class="error">Error: ${err.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
